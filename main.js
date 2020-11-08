@@ -117,7 +117,9 @@ healthcheck(callback) {
       this.emitOffline();
       log.error("External system is temporarily down for maintenance. " + this.id);
       // `\nError returned from GET request:\n${JSON.stringify(error)}`);
-      callback(result, error);
+      if(callback) {
+          callback(result, error);
+      }
    } else {
      /**
       * Write this block.
@@ -131,7 +133,9 @@ healthcheck(callback) {
       */
       this.emitOnline();
       log.debug("Service is up and running. " + this.id);
-      callback(result, error);
+      if (callback) {
+        callback(result, error);
+      }
    }
  });
 }
