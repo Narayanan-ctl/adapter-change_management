@@ -193,11 +193,7 @@ healthcheck(callback) {
      * Note how the object was instantiated in the constructor().
      * get() takes a callback function.
      */
-     let responseDate = null;
-     responseData = this.connector.get(callback);
-     if(responseData["body"]) {
-         
-     }
+     this.connector.get(callback);
   }
 
   /**
