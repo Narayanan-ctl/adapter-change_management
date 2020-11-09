@@ -193,11 +193,25 @@ healthcheck(callback) {
      * Note how the object was instantiated in the constructor().
      * get() takes a callback function.
      */
-     let responseDate = null;
-     responseData = this.connector.get(callback);
+     // let values = ['number', 'active', 'priority', 'description', 'work_start', 'work_end', 'sys_id'];
+     let returnData = null;
+     let requiredModifiedData = null;
+     let responseData = this.connector.get(callback);
      if(responseData["body"]) {
-         
+         returnData = JSON.parse(responseData.body);
+         for (let i = 0; i < returnData.result.length; i++) {
+            requiredModifiedData = returnData.result;
+            requiredModifiedData[i] = {};
+            requiredModifiedData[i]['change_ticket_number'] = returnData.result[i].number;
+            requiredModifiedData[i]['change_ticket_key'] = returnData.result[i].sys_id;
+            requiredModifiedData[i]['active'] = returnData.result[i].active;
+            requiredModifiedData[i]['priority'] = returnData.result[i].priority;
+            requiredModifiedData[i]['description'] = returnData.result[i].description;
+            requiredModifiedData[i]['work_start'] = returnData.result[i].work_start;
+            requiredModifiedData[i]['work_end'] = returnData.result[i].work_end;
+        }
      }
+     return requiredModifiedData;
   }
 
   /**
@@ -216,7 +230,20 @@ healthcheck(callback) {
      * Note how the object was instantiated in the constructor().
      * post() takes a callback function.
      */
-     this.connector.post(callback);
+     let returnData = null;
+     let requiredModifiedData = {};
+     let responseData = this.connector.post(callback);
+     if(responseData["body"]) {
+        returnData = JSON.parse(responseData.body);
+        requiredModifiedData['change_ticket_number'] = returnData.result.number;
+        requiredModifiedData['change_ticket_key'] = returnData.result.sys_id;
+        requiredModifiedData['active'] = returnData.result.active;
+        requiredModifiedData['priority'] = returnData.result.priority;
+        requiredModifiedData['description'] = returnData.result.description;
+        requiredModifiedData['work_start'] = returnData.result.work_start;
+        requiredModifiedData['work_end'] = returnData.result.work_end;
+     }
+     return requiredModifiedData;
   }
 }
 
