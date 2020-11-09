@@ -194,10 +194,13 @@ healthcheck(callback) {
      * get() takes a callback function.
      */
      // let values = ['number', 'active', 'priority', 'description', 'work_start', 'work_end', 'sys_id'];
+     // this.connector.get(callback);
+     let responseData = null;
      let returnData = null;
      let requiredModifiedData = null;
-     let responseData = this.connector.get(callback);
-     if(responseData["body"]) {
+     responseData = this.connector.get(callback);
+     log.info("Connector  **************************           " + responseData);
+     if(responseData != undefined && "body" in responseData) {
          returnData = JSON.parse(responseData.body);
          for (let i = 0; i < returnData.result.length; i++) {
             requiredModifiedData = returnData.result;
@@ -211,6 +214,7 @@ healthcheck(callback) {
             requiredModifiedData[i]['work_end'] = returnData.result[i].work_end;
         }
      }
+     log.info("GETTTTTTTTTTTTTTTTTTTTT " + callback);
      return requiredModifiedData;
   }
 
@@ -230,10 +234,14 @@ healthcheck(callback) {
      * Note how the object was instantiated in the constructor().
      * post() takes a callback function.
      */
+     // this.connector.post(callback);
+     let responseData = null;
      let returnData = null;
      let requiredModifiedData = {};
-     let responseData = this.connector.post(callback);
-     if(responseData["body"]) {
+     responseData = this.connector.post(callback);
+     log.info("********CALLBACK********** " + callback);
+     log.info("********POST************** " + responseData);
+     if(responseData != undefined && "body" in responseData) {
         returnData = JSON.parse(responseData.body);
         requiredModifiedData['change_ticket_number'] = returnData.result.number;
         requiredModifiedData['change_ticket_key'] = returnData.result.sys_id;
