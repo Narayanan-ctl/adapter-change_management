@@ -195,7 +195,8 @@ healthcheck(callback) {
      */
      // let values = ['number', 'active', 'priority', 'description', 'work_start', 'work_end', 'sys_id'];
      // this.connector.get(callback);
-     let responseData = null;
+     // code changes here
+     /*let responseData = null;
      let returnData = null;
      let requiredModifiedData = null;
      responseData = this.connector.get(callback);
@@ -215,7 +216,35 @@ healthcheck(callback) {
         }
      }
      log.info("GETTTTTTTTTTTTTTTTTTTTT " + callback);
-     return requiredModifiedData;
+     return requiredModifiedData;*/
+     let returnData = null;
+     let requiredModifiedData = [{}];
+     this.connector.get((responseData, error) => {
+        if (error) {
+           log.error("Some error has occured");
+        } else {
+           log.info("Success!!");
+           if(responseData != undefined && "body" in responseData) {
+            returnData = JSON.parse(responseData.body);
+            // log.info("*******Testing*****: " + JSON.stringify(JSON.parse(returnData).result));
+            for (let i = 0; i < returnData.result.length; i++) {
+               // requiredModifiedData = returnData.result;
+               log.info("*******Testing*****: " + JSON.stringify(returnData.result[i]));
+               requiredModifiedData[i] = {};
+               requiredModifiedData[i]["change_ticket_number"] = returnData.result[i].number;
+               requiredModifiedData[i]["change_ticket_key"] = returnData.result[i].sys_id;
+               requiredModifiedData[i]["active"] = returnData.result[i].active;
+               requiredModifiedData[i]["priority"] = returnData.result[i].priority;
+               requiredModifiedData[i]["description"] = returnData.result[i].description;
+               requiredModifiedData[i]["work_start"] = returnData.result[i].work_start;
+               requiredModifiedData[i]["work_end"] = returnData.result[i].work_end;
+               log.info("*******Number*****: " + JSON.stringify(requiredModifiedData[i]));
+           }
+        }
+        }
+        log.info("*******Number*****: " + JSON.stringify(requiredModifiedData));
+        return callback(requiredModifiedData, error)
+      });
   }
 
   /**
