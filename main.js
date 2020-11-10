@@ -117,9 +117,6 @@ healthcheck(callback) {
       this.emitOffline();
       log.error("External system is temporarily down for maintenance. " + this.id);
       // `\nError returned from GET request:\n${JSON.stringify(error)}`);
-      if(callback) {
-          callback(result, error);
-      }
    } else {
      /**
       * Write this block.
@@ -133,9 +130,9 @@ healthcheck(callback) {
       */
       this.emitOnline();
       log.debug("Service is up and running. " + this.id);
-      if (callback) {
-        callback(result, error);
-      }
+   }
+   if (callback) {
+    callback(result, error);
    }
  });
 }
@@ -193,30 +190,6 @@ healthcheck(callback) {
      * Note how the object was instantiated in the constructor().
      * get() takes a callback function.
      */
-     // let values = ['number', 'active', 'priority', 'description', 'work_start', 'work_end', 'sys_id'];
-     // this.connector.get(callback);
-     // code changes here
-     /*let responseData = null;
-     let returnData = null;
-     let requiredModifiedData = null;
-     responseData = this.connector.get(callback);
-     log.info("Connector  **************************           " + responseData);
-     if(responseData != undefined && "body" in responseData) {
-         returnData = JSON.parse(responseData.body);
-         for (let i = 0; i < returnData.result.length; i++) {
-            requiredModifiedData = returnData.result;
-            requiredModifiedData[i] = {};
-            requiredModifiedData[i]['change_ticket_number'] = returnData.result[i].number;
-            requiredModifiedData[i]['change_ticket_key'] = returnData.result[i].sys_id;
-            requiredModifiedData[i]['active'] = returnData.result[i].active;
-            requiredModifiedData[i]['priority'] = returnData.result[i].priority;
-            requiredModifiedData[i]['description'] = returnData.result[i].description;
-            requiredModifiedData[i]['work_start'] = returnData.result[i].work_start;
-            requiredModifiedData[i]['work_end'] = returnData.result[i].work_end;
-        }
-     }
-     log.info("GETTTTTTTTTTTTTTTTTTTTT " + callback);
-     return requiredModifiedData;*/
      let returnData = null;
      let requiredModifiedData = [{}];
      this.connector.get((responseData, error) => {
@@ -225,25 +198,23 @@ healthcheck(callback) {
         } else {
            log.info("Success!!");
            if(responseData != undefined && "body" in responseData) {
-            returnData = JSON.parse(responseData.body);
-            // log.info("*******Testing*****: " + JSON.stringify(JSON.parse(returnData).result));
-            for (let i = 0; i < returnData.result.length; i++) {
+
+               returnData = JSON.parse(responseData.body);
+               for (let i = 0; i < returnData.result.length; i++) {
                // requiredModifiedData = returnData.result;
-               log.info("*******Testing*****: " + JSON.stringify(returnData.result[i]));
-               requiredModifiedData[i] = {};
-               requiredModifiedData[i]["change_ticket_number"] = returnData.result[i].number;
-               requiredModifiedData[i]["change_ticket_key"] = returnData.result[i].sys_id;
-               requiredModifiedData[i]["active"] = returnData.result[i].active;
-               requiredModifiedData[i]["priority"] = returnData.result[i].priority;
-               requiredModifiedData[i]["description"] = returnData.result[i].description;
-               requiredModifiedData[i]["work_start"] = returnData.result[i].work_start;
-               requiredModifiedData[i]["work_end"] = returnData.result[i].work_end;
-               log.info("*******Number*****: " + JSON.stringify(requiredModifiedData[i]));
-           }
+                requiredModifiedData[i] = {};
+                requiredModifiedData[i]["change_ticket_number"] = returnData.result[i].number;
+                requiredModifiedData[i]["change_ticket_key"] = returnData.result[i].sys_id;
+                requiredModifiedData[i]["active"] = returnData.result[i].active;
+                requiredModifiedData[i]["priority"] = returnData.result[i].priority;
+                requiredModifiedData[i]["description"] = returnData.result[i].description;
+                requiredModifiedData[i]["work_start"] = returnData.result[i].work_start;
+                requiredModifiedData[i]["work_end"] = returnData.result[i].work_end;
+              }
+            }
         }
-        }
-        log.info("*******Number*****: " + JSON.stringify(requiredModifiedData));
-        return callback(requiredModifiedData, error)
+        log.info("EXTRACTED GET DATA: " + JSON.stringify(requiredModifiedData));
+        return callback(requiredModifiedData, error);
       });
   }
 
@@ -263,24 +234,28 @@ healthcheck(callback) {
      * Note how the object was instantiated in the constructor().
      * post() takes a callback function.
      */
-     // this.connector.post(callback);
-     let responseData = null;
      let returnData = null;
      let requiredModifiedData = {};
-     responseData = this.connector.post(callback);
-     log.info("********CALLBACK********** " + callback);
-     log.info("********POST************** " + responseData);
-     if(responseData != undefined && "body" in responseData) {
-        returnData = JSON.parse(responseData.body);
-        requiredModifiedData['change_ticket_number'] = returnData.result.number;
-        requiredModifiedData['change_ticket_key'] = returnData.result.sys_id;
-        requiredModifiedData['active'] = returnData.result.active;
-        requiredModifiedData['priority'] = returnData.result.priority;
-        requiredModifiedData['description'] = returnData.result.description;
-        requiredModifiedData['work_start'] = returnData.result.work_start;
-        requiredModifiedData['work_end'] = returnData.result.work_end;
-     }
-     return requiredModifiedData;
+     
+     this.connector.post((responseData, error) => {
+         if (error) {
+            log.error("Some error has occured");
+         } else {
+            log.info("Success!!");
+            if(responseData != undefined && "body" in responseData) {
+                returnData = JSON.parse(responseData.body);
+                requiredModifiedData['change_ticket_number'] = returnData.result.number;
+                requiredModifiedData['change_ticket_key'] = returnData.result.sys_id;
+                requiredModifiedData['active'] = returnData.result.active;
+                requiredModifiedData['priority'] = returnData.result.priority;
+                requiredModifiedData['description'] = returnData.result.description;
+                requiredModifiedData['work_start'] = returnData.result.work_start;
+                requiredModifiedData['work_end'] = returnData.result.work_end;
+            }
+         }
+         log.info("EXTRACTED POST DATA: " + JSON.stringify(requiredModifiedData));
+         return callback(requiredModifiedData, error);
+      });
   }
 }
 
